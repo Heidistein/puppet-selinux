@@ -37,7 +37,7 @@ define selinux::module(
   $syncversion  = true,
 ) {
 
-  require selinux
+  include ::selinux
 
   validate_re($ensure, [ '^present$', '^absent$' ], '$ensure must be "present" or "absent"')
   if $ensure == 'present' and $source == undef and $content == undef {
@@ -71,17 +71,17 @@ define selinux::module(
   ~>
   exec { "${sx_mod_dir}/${prefix}${name}.pp":
   # Only allow refresh in the event that the initial .te file is updated.
-    path        => '/sbin:/usr/sbin:/bin:/usr/bin',
+    command     => shellquote('make', '-f', $makefile, "${prefix}${name}.pp"),
+    path        => '/bin:/sbin:/usr/bin:/usr/sbin',
     refreshonly => true,
     cwd         => $sx_mod_dir,
-    command     => "make -f ${makefile} ${prefix}${name}.pp",
   }
   ->
-  selmodule { "${prefix}${name}":
+  selmodule { $name:
     # Load the module if it has changed or was not loaded
     # Warning: change the .te version!
-    ensure       => $ensure,
-    selmoduledir => $sx_mod_dir,
-    syncversion  => $syncversion,
+    ensure        => $ensure,
+    selmodulepath => "${sx_mod_dir}/${prefix}${name}.pp",
+    syncversion   => $syncversion,
   }
 }

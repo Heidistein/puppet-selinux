@@ -12,94 +12,79 @@ describe 'selinux' do
         }
       end
 
-      it { should contain_package('policycoreutils').with(ensure: 'installed') }
+      it { should contain_package('policycoreutils').with(ensure: 'present') }
     end
 
-    context "On RedHat 6 based OSes" do
-      let(:facts) do
-        {
-          osfamily: 'RedHat',
-          operatingsystem: 'RedHat',
-          operatingsystemmajrelease: '6',
-          selinux_current_mode: 'enforcing'
-        }
+    %w(6).each do |majrelease|
+      context "On RedHat #{majrelease} based OSes" do
+        let(:facts) do
+          {
+            osfamily: 'RedHat',
+            operatingsystem: 'RedHat',
+            operatingsystemmajrelease: majrelease,
+            selinux_current_mode: 'enforcing'
+          }
+        end
+
+        it { should contain_package('policycoreutils-python').with(ensure: 'present') }
       end
-
-      it { should contain_package('policycoreutils-python').with(ensure: 'installed') }
-    end
-
-    context "On RedHat 7 based OSes" do
-      let(:facts) do
-        {
-          osfamily: 'RedHat',
-          operatingsystem: 'RedHat',
-          operatingsystemmajrelease: '7',
-          selinux_current_mode: 'enforcing'
-        }
-      end
-
-      it { should contain_package('policycoreutils-devel').with(ensure: 'installed') }
     end
 
-    context 'On Fedora 19' do
-      let(:facts) do
-        {
-          osfamily: 'RedHat',
-          operatingsystem: 'Fedora',
-          operatingsystemmajrelease: '19',
-        }
+    %w(7).each do |majrelease|
+      context "On RedHat #{majrelease} based OSes" do
+        let(:facts) do
+          {
+            osfamily: 'RedHat',
+            operatingsystem: 'RedHat',
+            operatingsystemmajrelease: majrelease,
+            selinux_current_mode: 'enforcing'
+          }
+        end
+
+        it { should contain_package('selinux-policy-devel').with(ensure: 'present') }
       end
-      it { should contain_package('policycoreutils-python').with(ensure: 'installed') }
     end
-    context 'On Fedora 20' do
-      let(:facts) do
-        {
-          osfamily: 'RedHat',
-          operatingsystem: 'Fedora',
-          operatingsystemmajrelease: '20',
-        }
+
+    %w(19 20).each do |majrelease|
+      context "On Fedora #{majrelease}" do
+        let(:facts) do
+          {
+            osfamily: 'RedHat',
+            operatingsystem: 'Fedora',
+            operatingsystemmajrelease: majrelease,
+            selinux_current_mode: 'enforcing'
+          }
+        end
+        it { should contain_package('policycoreutils-python').with(ensure: 'present') }
       end
-    it { should contain_package('policycoreutils-python').with(ensure: 'installed') }
     end
-    context 'On Fedora 21' do
-      let(:facts) do
-        {
-          osfamily: 'RedHat',
-          operatingsystem: 'Fedora',
-          operatingsystemmajrelease: '21',
-        }
+
+    %w(21 22 23).each do |majrelease|
+      context "On Fedora #{majrelease}" do
+        let(:facts) do
+          {
+            osfamily: 'RedHat',
+            operatingsystem: 'Fedora',
+            operatingsystemmajrelease: majrelease,
+            selinux_current_mode: 'enforcing'
+          }
+        end
+        it { should contain_package('policycoreutils-devel').with(ensure: 'present') }
       end
-      it { should contain_package('policycoreutils-devel').with(ensure: 'installed') }
     end
-    context 'On Fedora 22' do
-      let(:facts) do
-        {
-          osfamily: 'RedHat',
-          operatingsystem: 'Fedora',
-          operatingsystemmajrelease: '22',
-        }
+
+    %w(24).each do |majrelease|
+      context "On Fedora #{majrelease}" do
+        let(:facts) do
+          {
+            osfamily: 'RedHat',
+            operatingsystem: 'Fedora',
+            operatingsystemmajrelease: majrelease,
+            selinux_current_mode: 'enforcing'
+          }
+        end
+        it { should contain_package('selinux-policy-devel').with(ensure: 'present') }
       end
-      it { should contain_package('policycoreutils-devel').with(ensure: 'installed') }
-    end
-    context 'On Fedora 23' do
-      let(:facts) do
-        {
-          osfamily: 'RedHat',
-          operatingsystem: 'Fedora',
-          operatingsystemmajrelease: '23',
-        }
-      end
-      it { should contain_package('policycoreutils-devel').with(ensure: 'installed') }
-    end
-    context 'On Fedora 24' do
-      let(:facts) do
-        {
-          osfamily: 'RedHat',
-          operatingsystem: 'Fedora',
-          operatingsystemmajrelease: '24',
-        }
-      end
-      it { should contain_package('policycoreutils-devel').with(ensure: 'installed') }
     end
 
     context 'do not manage package' do
@@ -116,7 +101,7 @@ describe 'selinux' do
         }
       end
 
-      it { should_not contain_package('policycoreutils').with(ensure: 'installed') }
+      it { should_not contain_package('policycoreutils').with(ensure: 'present') }
     end
 
     context 'install a different package name' do
@@ -133,7 +118,7 @@ describe 'selinux' do
         }
       end
 
-      it { should contain_package('some_package').with(ensure: 'installed') }
+      it { should contain_package('some_package').with(ensure: 'present') }
     end
   end
 end
